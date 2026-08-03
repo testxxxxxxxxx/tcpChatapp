@@ -7,7 +7,7 @@
 #include <cstdlib>
 #include <unistd.h>
 
-void SocketServer::Server::init(int size) {
+void ChatApp::SocketServer::Server::init(int size) {
 	int opt = 1;
 	if((this->fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
 		perror("Socket error!\n");
@@ -31,7 +31,7 @@ void SocketServer::Server::init(int size) {
 	}
 	this->setnonblock(this->fd);
 }
-int SocketServer::Server::acceptConnections(struct sockaddr_in* caddr) {
+int ChatApp::SocketServer::Server::acceptConnections(struct sockaddr_in* caddr) {
 	socklen_t caddrSize = sizeof(caddr);
 	int cfd = accept(this->fd, (struct sockaddr*)&caddr, &caddrSize);
 
@@ -43,10 +43,10 @@ int SocketServer::Server::acceptConnections(struct sockaddr_in* caddr) {
 	}
 	return cfd;
 }
-void SocketServer::Server::closeSocket() {
+void ChatApp::SocketServer::Server::closeSocket() {
 	close(this->fd);
 }
-void SocketServer::Server::setnonblock(int fd) {
+void ChatApp::SocketServer::Server::setnonblock(int fd) {
 	int flags = fcntl(fd, F_GETFL);
 	fcntl(fd, F_SETFL, flags | O_NONBLOCK);
 }

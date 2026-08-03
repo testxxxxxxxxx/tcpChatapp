@@ -1,7 +1,7 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 #include <netinet/in.h>
-namespace SocketServer {
+namespace ChatApp::SocketServer {
 	class ServerI {
 		virtual void init(int size) = 0;
 		virtual int acceptConnections(struct sockaddr_in* caddr) = 0;
