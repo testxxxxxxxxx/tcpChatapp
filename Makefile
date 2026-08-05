@@ -1,7 +1,7 @@
-src_files = ./src/main.cpp ./src/Server.cpp
-include_files = ./include/main.hpp ./include/Server.hpp
+src_files = ./src/main.cpp ./src/Server.cpp ./src/Multiplexer.cpp
+include_files = ./include/main.hpp ./include/Server.hpp ./include/Multiplexer.hpp
 
-compile: 
+build: 
 	g++ $(include_files) $(src_files) -pthread -Wall -o ./bin/chatappServer
 
 clean:

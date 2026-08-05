@@ -12,14 +12,12 @@ namespace ChatApp::Multiplexing {
 			virtual void notifyWritable(int fd) = 0;
 	};
 	class Multiplexer : public MultiplexerI {
-		int efd, maxEvents;
 		ChatApp::SocketServer::Server* s;
+		int efd, maxEvents;
 
 		public:
 			Multiplexer(ChatApp::SocketServer::Server* s, int maxEvents): s(s), maxEvents(maxEvents) {}
-			~Multiplexer() {
-				delete s;
-			}
+			~Multiplexer() {}
 
 			void init() override;
 		        void loopEvent() override;
