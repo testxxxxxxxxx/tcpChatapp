@@ -6,6 +6,9 @@
 #include <cerrno>
 #include <cstdlib>
 #include <unistd.h>
+#include <openssl/ssl.h>
+#include <openssl/err.h>
+#include <openssl/crypto.h>
 
 void ChatApp::SocketServer::Server::init(int size) {
 	int opt = 1;
@@ -31,6 +34,13 @@ void ChatApp::SocketServer::Server::init(int size) {
 	}
 	this->setnonblock(this->fd);
 }
+void ChatApp::SocketServer::Server::initSSL() {
+	SSL_load_error_strings();
+	SSL_library_init();
+	this->ctx = SSL_CTX_new(TLS_server_method());
+	SSL_CTX_use_certificate_file(this->ctx, "server.crt", SSL_FILETYPE_PEM);
+	SSL_CTX_use_PrivateKey_file(this->ctx, "server.key", SSL_FILETYPE_PEM);
+}
 int ChatApp::SocketServer::Server::acceptConnections(struct sockaddr_in* caddr, socklen_t* caddrSize) {
 	int cfd = accept(this->fd, (struct sockaddr*)&caddr, caddrSize);
 
@@ -43,6 +53,7 @@ int ChatApp::SocketServer::Server::acceptConnections(struct sockaddr_in* caddr, 
 	return cfd;
 }
 void ChatApp::SocketServer::Server::closeSocket() {
+	SSL_CTX_free(this->ctx);
 	close(this->fd);
 }
 void ChatApp::SocketServer::Server::setnonblock(int fd) {
@@ -51,4 +62,7 @@ void ChatApp::SocketServer::Server::setnonblock(int fd) {
 }
 int ChatApp::SocketServer::Server::getSfd() {
 	return this->fd;
+}
+SSL_CTX* ChatApp::SocketServer::Server::getCTX() {
+	return this->ctx;
 }
