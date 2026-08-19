@@ -8,6 +8,7 @@
 #include <netinet/in.h>
 #include <openssl/crypto.h>
 #include <openssl/ssl.h>
+#include <string.h>
 #include <sys/epoll.h>
 #include <unistd.h>
 
@@ -47,11 +48,13 @@ void ChatApp::Multiplexing::Multiplexer::loopEvent(
       } else {
         if (events[i].events & EPOLLIN) {
           char buffer[BUFFOR_SIZE] = {};
-          int rc = SSL_read(ssl, buffer, sizeof(buffer));
+          int rc = SSL_read(ssl, buffer, BUFFOR_SIZE);
           ChatApp::Commands::Command c;
           cq->push(c);
         }
         if (events[i].events & EPOLLOUT) {
+          const char *answer = "hello";
+          SSL_write(ssl, answer, strlen(answer));
         }
       }
     }
