@@ -2,14 +2,17 @@
 #define COMMAND_HPP
 #include <string>
 namespace ChatApp::Commands {
-	class Command {
-		int fd, type;
-		std::string query;
-	};
 	enum class CommandType {
-		AUTH,
+		LOGIN,
 		MESSAGE,
 		CALL
 	};
+	class Command {
+		public:
+			int fd;
+			CommandType type;
+			std::string query;
+
+	};	
 };
 #endif

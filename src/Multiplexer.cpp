@@ -1,6 +1,7 @@
 #include "../include/Multiplexer.hpp"
 #include "../include/Command.hpp"
 #include "../include/CommandQueue.hpp"
+#include "../include/CommandParser.hpp"
 #include "../include/Server.hpp"
 // #include <iostream>
 #include <cstdlib>
@@ -8,6 +9,8 @@
 #include <netinet/in.h>
 #include <openssl/crypto.h>
 #include <openssl/ssl.h>
+#include <string>
+#include <string_view>
 #include <string.h>
 #include <sys/epoll.h>
 #include <unistd.h>
@@ -31,6 +34,7 @@ void ChatApp::Multiplexing::Multiplexer::loopEvent(
   struct sockaddr_in caddr;
   socklen_t caddrSize = sizeof(caddr);
   SSL *ssl;
+  ChatApp::Commands::Parser::CommandParser cp;
 
   while (1) {
     int countReady = epoll_wait(this->efd, events, this->maxEvents, -1);
@@ -49,8 +53,15 @@ void ChatApp::Multiplexing::Multiplexer::loopEvent(
         if (events[i].events & EPOLLIN) {
           char buffer[BUFFOR_SIZE] = {};
           int rc = SSL_read(ssl, buffer, BUFFOR_SIZE);
-          ChatApp::Commands::Command c;
-          cq->push(c);
+	  if(rc > 0) {
+	  	std::string bufStr;
+	  	bufStr.append(buffer, rc);
+	  	auto pos = bufStr.find('\0');
+	  	if(pos != std::string::npos) { 
+          		ChatApp::Commands::Command c = cp.parse(events[i].data.fd, std::string_view(bufStr.data(), pos));
+          		cq->push(c);
+	  	}
+	  }
         }
         if (events[i].events & EPOLLOUT) {
           const char *answer = "hello";
