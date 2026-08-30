@@ -6,14 +6,16 @@
 
 ChatApp::Commands::Command ChatApp::Commands::Parser::CommandParser::parse(int cfd, std::string_view query) {
 	std::vector<std::string> splited;
-	std::string subQuery; 
+	std::string subQuery;
+	char prev;	
 	for(char c : query) {
-		if(c == ' ') {
+		if(c == ' ' || (prev == '\\' && c == '0')) {
 			splited.push_back(subQuery);
 			subQuery = "";
 		}
 		else 
 			subQuery += c;
+		prev = c;
 	}
 	Command c;
 	c.fd = cfd;
@@ -23,6 +25,15 @@ ChatApp::Commands::Command ChatApp::Commands::Parser::CommandParser::parse(int c
 		c.type = ChatApp::Commands::CommandType::MESSAGE;
 	else if(splited[0] == "CALL")
 		c.type = ChatApp::Commands::CommandType::CALL;
-	c.query = splited[1];
+	subQuery = "";
+	for(char ch : query) {
+		if(ch == ' ') {
+			c.query.push_back(subQuery);
+			subQuery = "";
+		}
+		else
+			subQuery += ch;
+	}
+	c.query.push_back(subQuery);
 	return c;
 }

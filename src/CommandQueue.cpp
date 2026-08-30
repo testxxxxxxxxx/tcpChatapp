@@ -6,6 +6,8 @@ void ChatApp::Commands::Queue::CommandQueue::push(
   this->qCommand.push(c);
 }
 ChatApp::Commands::Command ChatApp::Commands::Queue::CommandQueue::pop() {
+  //if(this->qCommand.empty())
+	  //return nullptr;
   Command c = this->qCommand.front();
   this->qCommand.pop();
   return c;

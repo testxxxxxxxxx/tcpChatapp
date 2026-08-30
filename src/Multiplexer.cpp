@@ -56,7 +56,7 @@ void ChatApp::Multiplexing::Multiplexer::loopEvent(
 	  if(rc > 0) {
 	  	std::string bufStr;
 	  	bufStr.append(buffer, rc);
-	  	auto pos = bufStr.find('\0');
+	  	auto pos = bufStr.find("\0");
 	  	if(pos != std::string::npos) { 
           		ChatApp::Commands::Command c = cp.parse(events[i].data.fd, std::string_view(bufStr.data(), pos));
           		cq->push(c);
@@ -64,8 +64,11 @@ void ChatApp::Multiplexing::Multiplexer::loopEvent(
 	  }
         }
         if (events[i].events & EPOLLOUT) {
+	  ChatApp::Commands::Command c = cq->pop();
+	  /*if(c != nullptr)
+		  continue;*/
           const char *answer = "hello";
-          SSL_write(ssl, answer, strlen(answer));
+          SSL_write(ssl, answer, strlen(answer)); 
         }
       }
     }

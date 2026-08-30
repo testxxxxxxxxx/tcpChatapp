@@ -1,5 +1,6 @@
 #ifndef COMMAND_HPP
 #define COMMAND_HPP
+#include <vector>
 #include <string>
 namespace ChatApp::Commands {
 	enum class CommandType {
@@ -11,7 +12,7 @@ namespace ChatApp::Commands {
 		public:
 			int fd;
 			CommandType type;
-			std::string query;
+			std::vector<std::string> query;
 
 	};	
 };
