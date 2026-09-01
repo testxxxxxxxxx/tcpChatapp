@@ -7,18 +7,18 @@ class Command;
 namespace ChatApp::Commands::Queue {
 class CommandQueueI {
 public:
-  virtual void push(ChatApp::Commands::Command c) = 0;
-  virtual ChatApp::Commands::Command pop() = 0;
+  virtual void push(ChatApp::Commands::Command* c) = 0;
+  virtual ChatApp::Commands::Command* pop() = 0;
 };
 class CommandQueue : public CommandQueueI {
-  std::queue<ChatApp::Commands::Command> qCommand;
+  std::queue<ChatApp::Commands::Command*> qCommand;
 
 public:
   CommandQueue() {}
   virtual ~CommandQueue() = default;
 
-  void push(ChatApp::Commands::Command c) override;
-  ChatApp::Commands::Command pop() override;
+  void push(ChatApp::Commands::Command* c) override;
+  ChatApp::Commands::Command* pop() override;
 };
 }; // namespace ChatApp::Commands::Queue
 #endif

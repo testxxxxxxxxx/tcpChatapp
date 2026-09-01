@@ -14,6 +14,7 @@
 #include <string.h>
 #include <sys/epoll.h>
 #include <unistd.h>
+#include <unordered_map>
 
 #define BUFFOR_SIZE 1024
 
@@ -35,6 +36,7 @@ void ChatApp::Multiplexing::Multiplexer::loopEvent(
   socklen_t caddrSize = sizeof(caddr);
   SSL *ssl;
   ChatApp::Commands::Parser::CommandParser cp;
+  std::unordered_map<std::string, std::string> logged;
 
   while (1) {
     int countReady = epoll_wait(this->efd, events, this->maxEvents, -1);
@@ -58,17 +60,19 @@ void ChatApp::Multiplexing::Multiplexer::loopEvent(
 	  	bufStr.append(buffer, rc);
 	  	auto pos = bufStr.find("\0");
 	  	if(pos != std::string::npos) { 
-          		ChatApp::Commands::Command c = cp.parse(events[i].data.fd, std::string_view(bufStr.data(), pos));
+          		ChatApp::Commands::Command* c = cp.parse(events[i].data.fd, std::string_view(bufStr.data(), pos));
           		cq->push(c);
 	  	}
 	  }
         }
         if (events[i].events & EPOLLOUT) {
-	  ChatApp::Commands::Command c = cq->pop();
-	  /*if(c != nullptr)
-		  continue;*/
+	  ChatApp::Commands::Command* c = cq->pop();
+	  if(!c)
+		  continue;
           const char *answer = "hello";
-          SSL_write(ssl, answer, strlen(answer)); 
+          SSL_write(ssl, answer, strlen(answer));
+
+	 delete c; 
         }
       }
     }
