@@ -6,11 +6,19 @@ std::string ChatApp::ResponseManagement::ResponseProvider::getText(ChatApp::Comm
 	std::string response = "";
 	switch(c->type) {
 		case ChatApp::Commands::CommandType::LOGIN:
-			break;
+		{
+			std::string login = c->query[0];
+			std::string password = c->query[1];
+			//TODO: mysql connection
+		} break;
 		case ChatApp::Commands::CommandType::MESSAGE:
-			break;
+		{
+			
+		} break;
 		case ChatApp::Commands::CommandType::CALL:
-			break;
+		{
+
+		} break;
 		default:
 			break;
 	}
