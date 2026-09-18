@@ -2,6 +2,7 @@
 #include "../include/Command.hpp"
 #include "../include/CommandQueue.hpp"
 #include "../include/CommandParser.hpp"
+#include "../include/ResponseProvider.hpp"
 #include "../include/Server.hpp"
 // #include <iostream>
 #include <cstdlib>
@@ -36,6 +37,7 @@ void ChatApp::Multiplexing::Multiplexer::loopEvent(
   socklen_t caddrSize = sizeof(caddr);
   SSL *ssl;
   ChatApp::Commands::Parser::CommandParser cp;
+  ChatApp::ResponseManagement::ResponseProvider rr;
   std::unordered_map<std::string, std::string> logged;
 
   while (1) {
@@ -69,7 +71,7 @@ void ChatApp::Multiplexing::Multiplexer::loopEvent(
 	  ChatApp::Commands::Command* c = cq->pop();
 	  if(!c)
 		  continue;
-          const char *answer = "hello";
+          const char* answer = rr.getText(c).c_str();
           SSL_write(ssl, answer, strlen(answer));
 
 	 delete c; 
